@@ -57,4 +57,11 @@ struct mach_header const* mh_macho_header (MachoHelper* mh) ;
 struct load_command * mh_get_all_load_commands(MachoHelper* mh,int copy) ;
 
 void mh_print_load_commands(MachoHelper *mh);
+
+char * const mh_get_string_table(MachoHelper *mh,int copy);
+
+int mh_get_command_by_cmd(MachoHelper *mh, int cmd, void* command, int szcommand) ;
+
+struct nlist* mh_get_symbol_table(MachoHelper *mh,int copy) ;
+
 #endif /* macho_helper_h */

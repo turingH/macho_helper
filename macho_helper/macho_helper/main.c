@@ -37,6 +37,24 @@ int main(int argc, const char * argv[]) {
     printf ("\ntest:%s:%d",mh_load_commnad_strmap(lcs_no_copy->cmd),lcs_no_copy->cmdsize);
     
     mh_print_load_commands(mh);
+    
+    struct dysymtab_command dysymtab;
+    if (mh_get_command_by_cmd(mh, LC_DYSYMTAB, &dysymtab, sizeof(dysymtab))<0) {
+        printf("\nmh_get_command_by_cmd failed");
+    }
+    
+    struct symtab_command symtab ;
+    if (mh_get_command_by_cmd(mh, LC_SYMTAB, &symtab, sizeof(symtab))<0) {
+        printf("\nmh_get_command_by_cmd failed");
+    }
+    
+    char * const string_tab_copy = mh_get_string_table(mh, 1);
+    
+    char * const string_tab_no_copy = mh_get_string_table(mh, 0);
+    
+    struct nlist * symbol_table_copy = mh_get_symbol_table(mh, 1) ;
+    struct nlist * symbol_table_no_copy = mh_get_symbol_table(mh, 0) ;
+    
     printf("\n") ;
     return 0;
 }

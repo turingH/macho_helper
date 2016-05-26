@@ -62,25 +62,6 @@ const char* mh_load_commnad_strmap (int id)
             return "LC_PREBIND_CKSUM";
         case (0x18 | LC_REQ_DYLD):
             return "LC_LOAD_WEAK_DYLIB";
-
-//#define	LC_LAZY_LOAD_DYLIB 0x20	/* delay load of dylib until first use */
-//#define	 0x21	/* encrypted segment information */
-//#define	 	0x22	/* compressed dyld information */
-//#define	 (0x22|LC_REQ_DYLD)	/* compressed dyld information only */
-//#define	 (0x23 | LC_REQ_DYLD) /* load upward dylib */
-//#define  0x24   /* build for MacOSX min OS version */
-//#define  0x25 /* build for iPhoneOS min OS version */
-//#define  0x26 /* compressed table of function start addresses */
-//#define  0x27 /* string for dyld to treat
-//like environment variable */
-//#define  (0x28|LC_REQ_DYLD) /* replacement for LC_UNIXTHREAD */
-//#define  0x29 /* table of non-instructions in __text */
-//#define  0x2A /* source version used to build binary */
-//#define  0x2B /* Code signing DRs copied from linked dylibs */
-//#define	 0x2C /* 64-bit encrypted segment information */
-//#define  0x2D /* linker options in MH_OBJECT files */
-//#define  0x2E /* optimization hints in MH_OBJECT files */
-//#define  0x30 /* build for Watch min OS version */
         case 0x19:
             return "LC_SEGMENT_64";
         case 0x1a:

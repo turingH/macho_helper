@@ -173,27 +173,84 @@ void mh_print_load_commands(MachoHelper *mh)
     assert(cur) ;
     uint32_t i ;
     printf ("\nprint all load commands\n") ;
-    for (i = 0; i < mh_macho_header(mh)->sizeofcmds; i++) {
+    for (i = 0; i != mh_macho_header(mh)->ncmds; i++) {
         printf("\n%d\t:%s\t\t:%d",i,mh_load_commnad_strmap(cur->cmd),cur->cmdsize);
         cur = (struct load_command const *)(((char const*)cur)+cur->cmdsize);
     }
     
 }
+
+
+
+
+int mh_get_command_by_cmd(MachoHelper *mh, int cmd, void* command, int szcommand)
+{
+    struct load_command const *cur = mh_get_all_load_commands(mh, 0);
+    assert(cur) ;
+    uint32_t i ;
+    
+    for (i = 0; i < mh_macho_header(mh)->sizeofcmds; i++) {
+        if (cmd == cur->cmd) {
+            assert(szcommand == cur->cmdsize) ;
+            memcpy(command, cur, szcommand) ;
+            return 0 ;
+        }
+        cur = (struct load_command const *)(((char const*)cur)+cur->cmdsize);
+    }
+    
+    printf("\ncant find %s in all load commands",mh_load_commnad_strmap(cmd));
+    return -1 ;
+}
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+char * const mh_get_string_table(MachoHelper *mh,int copy)
+{
+    struct symtab_command symtabl ;
+    if (mh_get_command_by_cmd(mh, LC_SYMTAB, &symtabl, sizeof(symtabl))<0) {
+        printf("\nmh_get_string_table failed LC_SYMTAB");
+        return NULL ;
+    }
+    
+    if  (copy) {
+        char * string_table = NULL ;
+        string_table = (char *)malloc(sizeof(char)*symtabl.strsize);
+        if (!string_table) {
+            printf("\nmh_get_string_table failed malloc,size %lu",sizeof(char)*symtabl.strsize);
+            return NULL ;
+        }
+        memset(string_table, 0, symtabl.strsize);
+        memcpy(string_table, mh->macho_data+symtabl.stroff, sizeof(char)*symtabl.strsize);
+        return string_table ;
+    } else {
+        return (mh->macho_data+symtabl.stroff);
+    }
+    assert(0) ;
+}
+
+struct nlist* mh_get_symbol_table(MachoHelper *mh,int copy)
+{
+    struct symtab_command symtabl ;
+    if (mh_get_command_by_cmd(mh, LC_SYMTAB, &symtabl, sizeof(symtabl))<0) {
+        printf("\nmh_get_string_table failed LC_SYMTAB");
+        return NULL ;
+    }
+    
+    if (!copy) {
+        return mh->macho_data+symtabl.symoff ;
+    } else {
+        void * symbol_table = NULL ;
+        symbol_table = (void*)malloc(sizeof(struct nlist)*symtabl.nsyms);
+        if (!symbol_table) {
+            printf("\nmh_get_string_table failed malloc,size %lu",sizeof(struct nlist)*symtabl.nsyms);
+            return NULL ;
+        }
+        memset(symbol_table, 0, symtabl.strsize);
+        memcpy(symbol_table, mh->macho_data+symtabl.symoff,sizeof(struct nlist)*symtabl.nsyms);
+        return symbol_table ;
+    }
+    
+    return NULL;
+}
+
         
         
         
